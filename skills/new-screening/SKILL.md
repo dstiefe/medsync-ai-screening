@@ -53,8 +53,14 @@ Add one patient to one trial and decide, criterion by criterion, whether they qu
    - **Provisionally eligible**: no exclusion met, every inclusion met, nothing unknown.
    - **Incomplete**: anything still `unknown` or `investigator_judgment`. List exactly what is missing.
 10. **Save, after the clinician agrees.** Call `record_screening` with **one item for each of the trial's criteria**: `{kind, number, status, evidence}`, and the `study_id` only if you have one from step 2 (otherwise leave it empty). The server works out the overall result itself; if it differs from yours, report the server's. **Tell the clinician the study ID the patient was saved under**, in bold, so they can find them later in the Clinical Trials page. If the call is refused, read the message, fix the cause (for example remove an identifier, add missing evidence) and retry.
-11. **Confirm, only when asked.** If the screening is complete (not Incomplete) and the clinician says to finalize, call `confirm_screening`. Never confirm on your own initiative.
+11. **Confirm, only when asked.** If the screening is complete (not Incomplete) and the clinician says to finalize, call `confirm_screening`. That makes the patient **Confirmed eligible**. Never confirm on your own initiative. Enrolling the patient (consent signed) is a separate, later step; see the `my-patients` skill.
 12. **New information later.** Run this skill again with the same study ID; a new screening is added and the history is kept.
+
+## Pausing and resuming ("save where I am")
+
+- **Pause.** If the clinician says they are busy, want to stop, or asks you to "save where I am" / "save progress", call `record_screening` with `draft=true` and the criteria you have **actually assessed so far** (leave out the ones you have not looked at yet; do not mark those `unknown`). Leave `study_id` empty for a new patient. Then tell them, in bold, the study ID, how many criteria are done ("14 of 25"), and that the patient now shows under **Pending, In progress** on the Clinical Trials page. A draft is a working copy: it is never confirmed and the next save replaces it.
+- **Resume.** When the clinician comes back to a patient: call `list_patients`, show the patients that are **In progress** (and **Needs info**), and let them pick. Call `get_patient` to see what is saved and which criteria are **not yet assessed**, say where you left off, and continue from there with the **same study ID**. Finishing replaces the draft with the complete screening.
+- Stages you will see: **In progress** (a draft), **Needs info** (all criteria looked at but some still unknown), **In review** (eligible, waiting for the clinician to confirm), **Confirmed eligible**, **Admitted** (enrolled), **Not eligible**.
 
 ## Do not
 
