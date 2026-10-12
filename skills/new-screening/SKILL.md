@@ -26,7 +26,11 @@ Add one patient to one trial and decide, criterion by criterion, whether they qu
 
 ## Steps
 
-1. **Start with the clinician's trials.** Call `list_my_trials` and **show the list every time**, even when there is only one: for each trial its code and name, the clinician's role, and how many patients they have there. Ask which trial this screening is for, and wait for the answer. Do not ask for a study ID or anything else first.
+1. **Which trial.** Call `list_my_trials` and decide from what it returns and from the conversation so far:
+    - **The clinician already named the trial** in this conversation (for example "screen for EVEREST"): use it. Say which trial you are using, in one line; do not ask again.
+    - **They are on more than one trial and have not said which:** show the list (code and name, their role, and how many patients they have there) and **ask which trial this screening is for**. Wait for the answer. Do not ask for a study ID or anything else first.
+    - **They are on exactly one trial:** say so in one line ("You are on one trial, EVEREST") and carry on with it.
+    - **They are on none:** say so and tell them to ask the trial's administrator to add them.
 2. **The documents.** Ask the clinician to paste or attach the patient's notes, reports or images (and to keep names and dates out). **Do not ask for a study ID.** Handle the ID like this:
     - If the documents carry a screening ID (for example `SCR-TEST-01`), use that.
     - If the clinician says this is someone already entered, call `list_patients`, show the list, and let them pick.
