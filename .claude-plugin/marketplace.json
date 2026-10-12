@@ -1,0 +1,14 @@
+{
+  "name": "medsync-ai-screening",
+  "owner": {
+    "name": "Daniel Stiefel"
+  },
+  "plugins": [
+    {
+      "name": "medsync-ai-screening",
+      "source": "./",
+      "description": "Screen patients against clinical trial inclusion/exclusion criteria and ask questions about a trial protocol, using your own Claude."
+    }
+  ],
+  "description": "Clinical-trial screening plugin: eligibility screening and protocol Q&A through your own Claude."
+}
