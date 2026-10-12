@@ -1,7 +1,9 @@
 {
   "name": "medsync-ai-screening",
-  "description": "Screen patients against clinical trial inclusion/exclusion criteria and ask questions about a trial protocol, using the clinician's own Claude.",
-  "version": "0.1.0",
-  "author": { "name": "Daniel Stiefel" },
+  "description": "MedSync AI clinical-trial screening: check a patient against a trial's inclusion and exclusion criteria and ask about the protocol, using your own Claude.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Daniel Stiefel"
+  },
   "repository": "https://github.com/dstiefe/medsync-ai-screening"
 }
