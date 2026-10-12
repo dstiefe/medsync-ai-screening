@@ -5,4 +5,4 @@ description: List the clinical trials the signed-in clinician is part of, with t
 
 # My trials
 
-Call `list_my_trials` and show each trial's code, name, status and the clinician's role (creator, investigator or site). Offer next steps: screen a patient (`new-screening`) or ask about the protocol (`ask-about-trial`).
+Call `list_my_trials` and show each trial's code, name, status, protocol version, the clinician's role (creator, site investigator, or super admin) and how many patients they have there. Offer next steps: screen a patient (`new-screening`) or ask about the protocol (`ask-about-trial`).

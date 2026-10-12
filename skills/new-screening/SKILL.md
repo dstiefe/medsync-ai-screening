@@ -9,7 +9,7 @@ Add one patient to one trial and decide, criterion by criterion, whether they qu
 
 ## Rules that never bend
 
-- **No identifiers.** The patient exists only as a **study ID** (letters, digits, `-` or `_`, no spaces, e.g. `SCR-TEST-01`). Never write a name, initials, date of birth, MRN, phone, email or address anywhere, including in evidence and notes. If the documents or images show any, do not repeat them, and tell the clinician to keep them out. Use ages in years and **relative times** ("3 hours from onset"), not calendar dates.
+- **No identifiers.** The patient exists only as a **study ID** (letters, digits, `-` or `_`, no spaces, e.g. `SCR-TEST-01` or a server-assigned `EVEREST-0003`). Never write a name, initials, date of birth, MRN, phone, email or address anywhere, including in evidence and notes. If the documents or images show any, do not repeat them, and tell the clinician to keep them out. Use ages in years and **relative times** ("3 hours from onset"), not calendar dates.
 - **Silence is not "no".** If the documents do not say, the status is `unknown`. Never mark an exclusion `not_met` just because it is not mentioned.
 - **Quote the evidence** for every `met` / `not_met` call, and say which document it came from. If the clinician told you the answer, the evidence is "clinician stated: …".
 - **Every criterion gets answered**: all exclusion and all inclusion. The server refuses a screening that leaves one out.
@@ -26,8 +26,11 @@ Add one patient to one trial and decide, criterion by criterion, whether they qu
 
 ## Steps
 
-1. **Trial.** Call `list_my_trials`. If there is one, use it; otherwise ask which.
-2. **Study ID.** Ask the clinician for the study ID. If they are re-screening someone already entered, call `list_patients` to find the ID. Do not make one up from anything about the person.
+1. **Start with the clinician's trials.** Call `list_my_trials` and **show the list every time**, even when there is only one: for each trial its code and name, the clinician's role, and how many patients they have there. Ask which trial this screening is for, and wait for the answer. Do not ask for a study ID or anything else first.
+2. **The documents.** Ask the clinician to paste or attach the patient's notes, reports or images (and to keep names and dates out). **Do not ask for a study ID.** Handle the ID like this:
+    - If the documents carry a screening ID (for example `SCR-TEST-01`), use that.
+    - If the clinician says this is someone already entered, call `list_patients`, show the list, and let them pick.
+    - Otherwise leave `study_id` empty when you save; the server assigns the next number (for example `EVEREST-0003`) and returns it. Never invent an ID from anything about the person.
 3. **Packet.** Call `get_screening_packet` for the trial. Read the exclusion criteria, inclusion criteria, **screening rules** (which imaging study counts, which NIHSS counts, and so on) and **protocol notes** (known problems with the protocol's own wording).
 4. **Read what was provided** (pasted text, attached reports, images). First write yourself a short fact sheet of clinically relevant findings, without identifiers.
 5. **Look up definitions in the protocol, not from memory.** When a criterion depends on a scale or term (ASPECTS, SCORE-ICAD, mTICI, mRS, NIHSS timing, Heidelberg hemorrhage grading, "child-bearing potential", which imaging counts), call `search_protocol`, or `get_section` for a section you know (the packet lists related chunks; scales are in the appendices). Answer from what comes back and cite the section.
@@ -45,7 +48,7 @@ Add one patient to one trial and decide, criterion by criterion, whether they qu
    - **Not eligible**: an exclusion is met or an inclusion is not met.
    - **Provisionally eligible**: no exclusion met, every inclusion met, nothing unknown.
    - **Incomplete**: anything still `unknown` or `investigator_judgment`. List exactly what is missing.
-10. **Save, after the clinician agrees.** Call `record_screening` with the study ID and **one item for each of the trial's criteria**: `{kind, number, status, evidence}`. The server works out the overall result itself; if it differs from yours, report the server's. If the call is refused, read the message, fix the cause (for example remove an identifier, add missing evidence) and retry.
+10. **Save, after the clinician agrees.** Call `record_screening` with **one item for each of the trial's criteria**: `{kind, number, status, evidence}`, and the `study_id` only if you have one from step 2 (otherwise leave it empty). The server works out the overall result itself; if it differs from yours, report the server's. **Tell the clinician the study ID the patient was saved under**, in bold, so they can find them later in the Clinical Trials page. If the call is refused, read the message, fix the cause (for example remove an identifier, add missing evidence) and retry.
 11. **Confirm, only when asked.** If the screening is complete (not Incomplete) and the clinician says to finalize, call `confirm_screening`. Never confirm on your own initiative.
 12. **New information later.** Run this skill again with the same study ID; a new screening is added and the history is kept.
 
