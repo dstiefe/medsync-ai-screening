@@ -29,5 +29,9 @@ The MedSync trials server holds the criteria, applies the rules and decides the 
 5. **After it opens.** The server saves the patient and the form opens for the clinician to check, change, complete and submit. Tell them what you filled in and what is left for them. Do **not** call `trials_save_screening` for the same answers afterwards.
 6. **Reopen a patient.** Call `trials_patients`, let them pick, then `trials_open_form` with the `patient_id`. To see what is saved for one patient, call `trials_patient`.
 7. **If the form is not shown** (a client without card support), use `trials_save_screening` instead and tell the clinician the server's verdict and what is still needed.
-8. **Notes.** To keep the relevant findings of a document with the patient so a paused screening can resume, call `trials_add_note` with de-identified text (no files or images can be sent).
+8. **Save the documents with the patient.** After the form is open, for each document you read, call `trials_add_note` with the patient's `patient_id` and a short `title` (for example "ED note", "CTA report"). The files and images are never stored, so the note is the only record of what they said:
+    - **A note, report or lab:** send its clinically relevant text, copied faithfully, with **names, initials, dates of birth, record numbers, phone numbers, addresses and calendar dates removed** (write times relative to onset, for example "3.5 hours from onset").
+    - **An image:** write down what you can see, and say in the text that it is your reading of the image, not the picture.
+    - If the server refuses a note because it looks like it contains an identifier, remove the identifying part and try again.
+    - Tell the clinician plainly: "I saved the text of N documents with this patient; the original files are not stored."
 9. **Enrolling** is a separate step; see the `my-patients` skill.
