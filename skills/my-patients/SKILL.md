@@ -1,30 +1,17 @@
 ---
 name: my-patients
-description: List the patients in a clinical trial by stage, show one patient's screening criterion by criterion, confirm a completed screening, or enroll a confirmed-eligible patient once consent is signed. Use when the clinician asks "who have I screened", "show patient ...", "confirm that screening", or "enroll / admit that patient".
+description: List the patients in a clinical trial, show one patient's screening, or enroll an eligible patient once consent is signed. Use when the clinician asks "who have I screened", "show patient ...", or "enroll / admit that patient".
 ---
 
 # My patients
 
 Patients are study IDs only; never ask for or repeat a name or identifier.
 
-**Which trial:** call `list_my_trials`. If the clinician already named a trial in this conversation, use it. If they are on one trial, say which and use it. If they are on several and have not said which, show the list and ask.
-
-## Stages
-
-Every patient is in exactly one stage; the server decides it.
-
-| Group | Stage | Meaning |
-|---|---|---|
-| Pending | **In progress** | a draft saved part-way |
-| Pending | **Needs info** | all criteria looked at, but some still unknown or awaiting the investigator |
-| Pending | **In review** | eligible, waiting for the clinician to confirm |
-| | **Confirmed eligible** | the clinician confirmed they qualify; consent not yet recorded |
-| | **Admitted** | consent signed and enrolled |
-| | **Not eligible** | an exclusion is met or an inclusion is not met |
+**Which trial:** call `trials_list`. If the clinician already named a trial in this conversation, use it. If they are on one trial, say which and use it. If they are on several and have not said which, show the list and ask.
 
 ## What to do
 
-- **List:** call `list_patients` and show the patients **grouped by those stages, Pending first**, each with its study ID and the `reason` the server gives (for example "exclusion 3 met", "Still open: exclusion 8", "14 of 25 criteria answered"). A site investigator sees only the patients they added; a trial creator sees all.
-- **One patient:** call `get_patient` and show the stage, then the latest screening criterion by criterion (status and evidence), then the history, and list the patient's saved **documents** (the de-identified text of each note, report or image description; the original files are not stored). Read one with `get_document` when asked. For a draft, also list the criteria **not yet assessed** and offer to carry on with the `new-screening` skill using the same study ID.
-- **Confirm:** only when the clinician explicitly says to confirm or finalize a screening, and only for a complete one, call `confirm_screening`. A draft or an Incomplete screening cannot be confirmed: say what is missing and offer to carry on.
-- **Enroll (admit):** only for a patient who is **Confirmed eligible**, and only after the clinician **tells you the patient's informed consent has been signed**. Ask them that question if they have not said it; never assume it. Then call `enroll_patient` with `consent_signed=true`. The patient moves to **Admitted**. If the patient is not Confirmed eligible, say which stage they are in and what has to happen first.
+- **List:** call `trials_patients`. It returns three groups: `in_process` (not finished, or eligible and not yet enrolled), `failed` (with the criterion) and `in_trial` (enrolled). Show them with each patient's study ID and the reason the server gives. A doctor sees only their own patients; a trial admin sees all of the trial's.
+- **One patient:** call `trials_patient`. Show the verdict, the answers saved so far with their evidence (which came from Claude and is unverified), which criteria are still unanswered or failed, whether the patient is enrolled, and the titles of any saved notes. To carry on with a paused screening, open the form with `trials_open_form` and the `patient_id` (see the `new-screening` skill).
+- **Verdict:** the server's rule engine decides it. Tell the clinician what the server returned and let them decide. You never confirm a screening yourself.
+- **Enroll:** only for a patient whose latest screening is eligible (or eligible pending), and **only after the clinician tells you the patient's informed consent has been signed**. Ask them if they have not said; never assume it. Then call `trials_enroll_patient` with `consent_signed=true`. Leave `subject_id` out and the server assigns the next one. Enrollment is the clinician's decision: call it only when they say to.
