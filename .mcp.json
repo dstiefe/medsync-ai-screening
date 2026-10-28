@@ -2,7 +2,7 @@
   "mcpServers": {
     "medsync-trials": {
       "type": "http",
-      "url": "https://trials.medsync-ai.com/mcp/trials"
+      "url": "https://trials.medsync-ai.com/mcp"
     }
   }
 }

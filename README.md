@@ -9,7 +9,7 @@ Claude plugin for MedSync AI clinical-trial screening. The clinician's own Claud
     /plugin marketplace add dstiefe/medsync-ai-screening
     /plugin install medsync-ai-screening@medsync-ai-screening
 
-The plugin connects to `https://trials.medsync-ai.com/mcp/trials` (override with `MEDSYNC_TRIALS_URL`). The first time, Claude opens a MedSync AI sign-in page: use your MedSync AI account. You must be a member of a trial to connect.
+The plugin connects to `https://trials.medsync-ai.com/mcp`. The first time, Claude opens a MedSync AI sign-in page: use your MedSync AI account. You must be a member of a trial to connect.
 
 In claude.ai you may also need to add the connector yourself: Settings, Connectors, Add custom connector, name `MedSync AI Trials`, address as above.
 This repo holds only the plugin: no protocol text, no patient data, no credentials.
