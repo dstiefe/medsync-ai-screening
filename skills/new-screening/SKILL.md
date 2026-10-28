@@ -34,4 +34,14 @@ The MedSync trials server holds the criteria, applies the rules and decides the 
     - **An image:** write down what you can see, and say in the text that it is your reading of the image, not the picture.
     - If the server refuses a note because it looks like it contains an identifier, remove the identifying part and try again.
     - Tell the clinician plainly: "I saved the text of N documents with this patient; the original files are not stored."
-9. **Enrolling** is a separate step; see the `my-patients` skill.
+9. **Answering the rest in chat (only when the clinician wants that).** After you have read documents or the clinician has given details (step 4), offer one line: "I can ask you the remaining questions here, or you can finish them on the form." Do this **only** if they gave you something to start from, or if they ask you to ask. If they gave you nothing (step 2), do not ask questions; the blank form is theirs to fill in. If they choose chat:
+    - **Gather everything still open** (the questions with no answer yet, from `trials_screening_packet` and what `trials_patient` shows) into one grouped set of questions, and keep going until each is settled or the clinician says to leave it open.
+    - **Name the criterion and its exact threshold, and say why it matters:** "Inclusion 4 needs an NIHSS of 6 or more: what was the score?" Ask for the number or the fact, not "is it mild?".
+    - **Keep questions neutral.** Never phrase one so that a particular answer would make the patient eligible. Ask "Is there any history of atrial fibrillation?", not "No atrial fibrillation, right?".
+    - **Ask again when an answer is vague** ("I think so", "probably not"). Ask a narrower follow-up, or leave it unanswered. If the answer does not fit the criterion's wording (a different scale, range or time window), say so and ask for what the criterion needs.
+    - **When an answer conflicts with a document, show both** side by side and ask which is right. Record the clinician's answer and mention the conflict in the evidence. Do not quietly pick one.
+    - **A document's own conclusion is not evidence.** A note saying "meets criteria" settles nothing.
+    - **A criterion that can only be judged later** (during or after a procedure, or after a test not yet done) stays unanswered until that has happened; say what has to happen first.
+    - **Record each answer** with `trials_save_screening`, passing the `patient_id` (new answers are merged in, so save as you go). Use `"stated by the clinician"` as the evidence and `stated_by_clinician` true. After each answer, say how the result changed (the server returns the verdict and what is still needed) and what is still open.
+    - Tell the clinician the verdict the **server** returned. You never decide eligibility.
+10. **Enrolling** is a separate step; see the `my-patients` skill.
